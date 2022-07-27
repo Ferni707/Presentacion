@@ -1,0 +1,103 @@
+
+		AYUDA
+=====================================================================================================
+
+CREATE TABLE IF NOT EXISTS Ayuda (
+	cod_ayuda serial primary key,
+	tema text,
+	respuesta text,
+	usuario integer references Usuario (cod_usuario)
+	on delete cascade
+	on update cascade,
+	unique(tema, respuesta, usuario)
+);
+
+insert into Ayuda (cod_ayuda, tema, respuesta, usuario)
+    values (1, 'Inicio de sesion', 'Introducir el username y la contraseña', 1),
+	   (2, 'Crear cuenta', 'Dar al boton REGISTRARSE y rellenar con tus datos', 1),
+	   (3, 'Cerrar sesion', 'En el menu darle al boton SALIR', 1);
+
+=====================================================================================================
+
+		USUARIO
+=====================================================================================================
+
+CREATE TABLE IF NOT EXISTS Usuario (
+	cod_usuario serial primary key,
+	username text unique,
+	contrasena text
+);
+
+insert into Usuario (cod_usuario, username, contrasena)
+    values (1, Brais, abc123.),
+	   (2, Damian, abc123.),
+	   (3, Fernando, abc123.);
+
+=====================================================================================================
+
+		EVENTO
+=====================================================================================================
+
+CREATE TABLE IF NOT EXISTS Evento (
+	usuario integer references Usuario(cod_usuario)
+	on delete cascade
+	on update restrict,
+	fecha date default current_date,
+	hora time,
+	nombre text,
+	descripcion text,
+	ubicacion text,
+	primary key (usuario, fecha, hora)
+);
+
+*******************
+* NUEVA VERSION!! *
+*******************
+
+CREATE TABLE IF NOT EXISTS Evento (
+	cod_evento serial,
+	usuario integer references Usuario(cod_usuario)
+	on delete cascade
+	on update restrict,
+	fecha date default current_date,
+	hora text default to_char(now(),'HH12:MI:SS'),
+	nombre text,
+	descripcion text,
+	ubicacion text,
+	primary key (cod_evento),
+	unique (usuario, fecha, hora)
+);
+
+insert into Evento (usuario, fecha, hora, nombre, descripcion, ubicacion)
+    values (1, '2022-07-03', '10:00:00', 'Reunion', 'Reunion diaria con el Scrum Master', 'Landra');
+
+=====================================================================================================
+
+CREATE TABLE IF NOT EXISTS Recordatorio (
+	cod_recordatorio serial primary key,
+	nombre text,
+	informacion text,
+	usuario integer references Usuario(cod_usuario)
+	on delete cascade
+	on update cascade
+);
+
+insert into Recordatorio (nombre, informacion, usuario)
+values ('Endocrino', 'LLamar y pedir cita en el endocrino para finales de Septiembre', 1);
+
+=====================================================================================================
+
+CREATE TABLE IF NOT EXISTS Tipo_evento (
+	cod_tipo_evento serial primary key,
+	nombre text,
+	color text,
+	formal boolean,
+	evento integer references Evento(cod_evento)
+	on delete cascade
+	on update cascade
+);
+
+insert into Tipo_evento (nombre, color, formal, evento)
+values ('Trabajo', 'Verde', true, 1);
+
+=====================================================================================================
